@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import css from 'components/Modal/Modal.module.css';
 
 export const Modal = ({ largeImage, tag, onModalClose }) => {
@@ -14,4 +15,10 @@ export const Modal = ({ largeImage, tag, onModalClose }) => {
       </div>
     </div>
   );
+};
+
+Modal.propTypes = {
+  largeImage: PropTypes.string.isRequired,
+  tag: PropTypes.string.isRequired,
+  onModalClose: PropTypes.func.isRequired,
 };

@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import css from 'components/ImageGallery/ImageGallery.module.css';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import toast from 'react-hot-toast';
@@ -59,3 +60,8 @@ export class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  page: PropTypes.number.isRequired,
+  setStatus: PropTypes.func.isRequired,
+};
