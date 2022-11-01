@@ -2,41 +2,37 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import css from 'components/ImageGallery/ImageGallery.module.css';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
+import { request } from '../../api/request';
 import toast from 'react-hot-toast';
-
-const API_KEY = '29872445-b11cb18030e5a7e55f6afbc9a';
-const BASE_URL = 'https://pixabay.com/api/';
-const PARAMS = 'image_type=photo&orientation=horizontal&per_page=12';
 
 export class ImageGallery extends Component {
   state = {
     images: [],
-    error: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { setStatus, page } = this.props;
-    if (
-      prevProps.imageName !== this.props.imageName ||
-      page !== prevProps.page
-    ) {
+    const { imageName, setStatus, page } = this.props;
+    if (imageName !== prevProps.imageName) this.setState({ images: [] });
+
+    if (imageName !== prevProps.imageName || page !== prevProps.page) {
       setStatus('loading');
 
-      let url = `${BASE_URL}?q=${this.props.imageName}&page=${page}&key=${API_KEY}&${PARAMS}`;
-      setTimeout(() => {
-        fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            if (data.hits.length < 1) {
-              setStatus('rejected');
-              toast.error('Результатів пошуку за даним запитом не знайдено');
-            } else {
-              setStatus('resolved');
-            }
-            this.setState({ images: data.hits });
-          })
-          .catch(error => this.setState({ error }));
-      }, 2000);
+      try {
+        request(imageName, setStatus, page).then(data => {
+          console.log(data);
+          if (data.hits.length < 1) {
+            setStatus('rejected');
+            toast.error('Результатів пошуку за даним запитом не знайдено');
+          } else {
+            setStatus('resolved');
+          }
+          this.setState(state => {
+            return { images: [...state.images, ...data.hits] };
+          });
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
     }
   }
 
